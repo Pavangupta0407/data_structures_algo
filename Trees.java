@@ -317,5 +317,141 @@ class Trees {
         }
         return ceil;
     }
+    
+    public static int floor(Node root, int x) {
+        // Code here
+    	int floor=-1;
+    	while(root!=null) {
+    		if(root.data==x) {
+    			return root.data;
+    		}
+    		if(x>root.data) {
+    			floor=root.data;
+    			root=root.right;
+    		} else {
+    			root=root.left;
+    		}
+    	}
+    	return floor;
+    }
+    
+    //Insert into BST
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+    	if(root==null) {
+    		return new TreeNode(val);
+    	}
+    	TreeNode curr=root;
+    	while(curr!=null) {
+    		if(val < curr.val) {
+    			if(curr.left !=null) {
+    				curr=curr.left;
+    			}else {
+    				curr.left= new TreeNode(val);
+    				break;
+    			}
+    		} else {
+    			if(curr.right !=null) {
+    				curr=curr.right;
+    			}else {
+    				curr.right= new TreeNode(val);
+    				break;
+    			}
+    		}
+    	}
+        return root;
+    }
+    
+    //Delete Node form BST
+	public TreeNode deleteNode(TreeNode root, int key) {
+		if(root==null) {
+			return root;
+		}
+		if(root.val==key) {
+			return helper(root);
+		}
+		TreeNode tree=root;
+		while(root!=null) {
+			if(key<root.val) {
+				if(root.left!=null && root.left.val==key) {
+					root.left=helper(root.left);
+					break;
+				} else {
+					root=root.left;
+				}
+			} else {
+				if (root.right != null && root.right.val == key) {
+					root.right=helper(root.right);
+					break;
+				} else {
+					root = root.right;
+				}
+			}
+		}
+		return tree;
+	}
+	
+	public TreeNode helper(TreeNode root) {
+		if(root.right==null) {
+			return root.left;
+		}
+		if(root.left==null) {
+			return root.right;
+		}
+		TreeNode rightChild = root.right;
+		TreeNode lastRightofLeftTree = findLastRight(root.left);
+		lastRightofLeftTree.right=rightChild;
+		return root.left;
+	}
+	
+	public TreeNode findLastRight(TreeNode root) {
+		if(root.right==null) {
+			return root;
+		}
+		return findLastRight(root.right);
+	}
+	
+	//Brute Approach TO(N) SO(N)
+	public int kthSmallest(TreeNode root, int k) {
+		int ksmall,klar;
+		List arr=new ArrayList<>();
+		inorder(root,arr);
+		ksmall= (int) arr.get(k);
+		klar= (int)arr.get(arr.size()-k);
+		return ksmall;
+	}
+	
+	public void inorder(TreeNode root,List<Integer> arr) {
+		if(root==null) {
+			return;
+		}
+		inorder(root.left,arr);
+		arr.add(root.val);
+		inorder(root.right, arr);
+	}
+	
+	//Brute approach
+	public boolean isValidBST(TreeNode root) {
+		//Brute approach
+//        List arr=new ArrayList<>();
+//		inorder(root,arr);
+//		for(int i=0;i<arr.size()-1;i++) {
+//			if((int)arr.get(i) >= (int) arr.get(i+1)) {
+//				return false;
+//			}
+//		}
+//		return true;
+		//Optimiza using recursion
+		return isvalidBst(root,Long.MIN_VALUE,Long.MAX_VALUE);
+    }
+	
+	public boolean isvalidBst(TreeNode root, long min,long max) {
+		if(root==null) {
+			return true;
+		}
+		if(root.val>=max || root.val<=min) {
+			return false;
+		}
+		return isvalidBst(root.left, min, root.val) && isvalidBst(root.right, root.val, max);
+	}
 }
 
