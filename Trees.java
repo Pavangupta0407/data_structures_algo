@@ -453,5 +453,114 @@ class Trees {
 		}
 		return isvalidBst(root.left, min, root.val) && isvalidBst(root.right, root.val, max);
 	}
+	
+	//LCA
+	public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null){
+            return null;
+        }
+        return recursiveLCA(root,p,q);
+    }
+	
+	public TreeNode recursiveLCA(TreeNode root,TreeNode p,TreeNode q) {
+		int curr=root.val;
+		if(curr<p.val && curr<q.val) {
+			return recursiveLCA(root.right, p, q);
+		}
+		if(curr>p.val && curr>q.val) {
+			return recursiveLCA(root.left, p, q);
+		}
+		return root;
+	}
+	
+	public TreeNode iterativeLCA(TreeNode root,TreeNode p,TreeNode q) {
+		TreeNode res=null;
+		while(root!=null) {
+			int curr=root.val;
+			if(curr<p.val && curr<q.val) {
+				root=root.right;
+			}
+			else if(curr>p.val && curr>q.val) {
+				root=root.left;
+			} else {
+			res=root;
+			break;
+			}
+		}
+		return res;
+	}
+	
+	public TreeNode bstFromPreorder(int[] preorder) {
+		return preorderBST(preorder,Integer.MAX_VALUE,new int[]{0});
+	}
+	
+	public TreeNode preorderBST(int[] arr, int bound, int[] i) {
+		if(i[0]==arr.length || arr[i[0]]>bound) {
+			return null;
+		}
+		TreeNode root=new TreeNode(arr[i[0]++]);
+		root.left=preorderBST(arr, root.val, i);
+		root.right=preorderBST(arr, bound, i);
+		return root;
+	}
+	
+	public static void findPreSuc(Node root, Node[] pre, Node[] suc, int key) {
+        // code here.
+        // update pre[0] with the predecessor of the key
+        // update suc[0] with the successor of the key
+		Node successor = successor(root,key);
+		Node predessor = predessor(root, key);
+		pre[0]=predessor;
+		suc[0]=successor;
+    }
+	
+	public static Node successor(Node root,int key) {
+		Node suc=null;
+		while(root!=null) {
+			if(key >= root.data) {
+				root=root.right;
+			} else {
+				suc=root;
+				root=root.left;
+			}
+		}
+		return suc;
+	}
+	
+	public static Node predessor(Node root,int key) {
+		Node pre=null;
+		while(root!=null) {
+			if(root.data >= key) {
+				root=root.left;
+			} else {
+				pre=root;
+				root=root.right;
+			}
+		}
+		return pre;
+	}
+	
+	//653. Two Sum IV - Input is a BST
+	//Given the root of a binary search tree and an integer k, return true if there exist two elements in the BST such that their sum is equal to k, or false otherwise.
+	public boolean findTarget(TreeNode root, int k) {
+		return bruteTwoSum(root,k);
+	}
+	
+	public boolean bruteTwoSum(TreeNode root,int k) {
+		//Get inorder travesal which willbe sorted array
+		//Use two pointer for array traversal
+		List<Integer> lt = inorderiter(root);
+		int i=0,j=lt.size()-1;
+		while(i<j) {
+			if((lt.get(i)+lt.get(j))==k) {
+				return true;
+			} else if((lt.get(i)+lt.get(j))>k) {
+				j--;
+			} else {
+				i++;
+			}
+		}
+		return false;
+	}
 }
 
