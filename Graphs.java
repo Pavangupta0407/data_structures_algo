@@ -205,14 +205,230 @@ public class Graphs {
 		image[sr][sc]=color;
 	}
 	
-	//Undirected Graph Cycle
+	//Undirected Graph Cycle Using BFS
+//	public boolean isCycle(ArrayList<ArrayList<Integer>> adj) {
+//        // Code here
+//		boolean[] visited=new boolean[adj.size()];
+//		for(int i=0;i<adj.size();i++) {
+//			if(!visited[i]) {
+//				boolean detect = detect(adj,i,visited);
+//				if(detect) {
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//    }
+	
+	public boolean detect(ArrayList<ArrayList<Integer>> adj,int src,boolean[] visited) {
+		Queue<Node> q= new LinkedList<Node>();
+		q.add(new Node(src,-1));
+		visited[src]=true;
+		while(!q.isEmpty()) {
+			Node node = q.poll();
+			int parentNode = node.j;
+			for(Integer it:adj.get(node.i)) {
+				if(!visited[it]) {
+					q.add(new Node(it,node.i));
+					visited[it]=true;
+				} else if(visited[it] && it!=parentNode){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	//Undirected Graph Cycle Using DFS
 	public boolean isCycle(ArrayList<ArrayList<Integer>> adj) {
         // Code here
-		int[] visited=new int[adj.size()];
-		Queue<Integer> q= new LinkedList<Integer>();
+		boolean[] visited=new boolean[adj.size()];
 		for(int i=0;i<adj.size();i++) {
-			
+			if(!visited[i]) {
+				boolean detect = detectDFS(adj,i,visited,-1);
+				if(detect) {
+					return true;
+				}
+			}
 		}
+		return false;
     }
+	
+	public boolean detectDFS(ArrayList<ArrayList<Integer>> adj,int src,boolean[] visited,int parent) {
+		visited[src]=true;
+		for(Integer it:adj.get(src)) {
+			if(!visited[it]) {
+				if(detectDFS(adj,it,visited,src)) {
+					return true;
+				}
+			} else if(it!=parent){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	//542. 01 Matrix using BFS since we need to find min distance
+	public int[][] updateMatrix(int[][] mat) {
+		int n=mat.length;
+		int m=mat[0].length;
+		boolean[][] visited = new boolean[n][m];
+		int[][] result=new int[n][m];
+		Queue<Pair> q=new LinkedList<Pair>();
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(mat[i][j]==0) {
+					q.add(new Pair(new Node(i,j),0));
+					visited[i][j]=true;
+				}
+				result[i][j]=0;
+			}
+		}
+		int drow[]= {0,-1,0,+1};
+		int dcol[]= {-1,0,+1,0};
+		while(!q.isEmpty()) {
+			Pair pair = q.poll();
+			Node node = pair.node;
+			int dist = pair.time;
+			result[node.i][node.j]=dist;
+			for(int i=0;i<4;i++) {
+				int nrow = node.i + drow[i];
+				int ncol = node.j + dcol[i];
+				if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && mat[nrow][ncol]==1) {
+					q.add(new Pair(new Node(nrow,ncol),dist+1));
+					visited[nrow][ncol]=true;
+				}
+			}
+		}
+		return result;
+	}
+	
+	//130. Surrounded Regions  key point boarder o's won't be applicable to form region
+	public void solve(char[][] board) {
+		int n = board.length;
+		int m = board[0].length;
+		boolean[][] visited=new boolean[n][m];
+		//Traverseing borders first to mark them visited and not replacing O's with X
+		for(int j=0;j<m;j++) {
+			//First Row
+			if(board[0][j]=='O' && !visited[0][j]) {
+				boardDFS(board,visited,0,j,n,m);
+			}
+			//Last Row
+			if(board[n-1][j]=='O' && !visited[n-1][j]) {
+				boardDFS(board,visited,n-1,j,n,m);
+			}
+		}
+		for(int j=0;j<n;j++) {
+			//First column
+			if(board[j][0]=='O' && !visited[j][0]) {
+				boardDFS(board,visited,j,0,n,m);
+			}
+			//Last Row
+			if(board[j][m-1]=='O' && !visited[j][m-1]) {
+				boardDFS(board,visited,j,m-1,n,m);
+			}
+		}
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(board[i][j]=='O' && !visited[i][j]) {
+					board[i][j]='X';
+				}
+			}
+		}
+	}
+	
+	public void boardDFS(char[][] board,boolean[][] visited,int sr,int sc,int n,int m) {
+		visited[sr][sc]=true;
+		int drow[]= {0,-1,0,+1};
+		int dcol[]= {-1,0,+1,0};
+		for(int i=0;i<4;i++) {
+			int nrow = sr + drow[i];
+			int ncol = sc + dcol[i];
+			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && board[nrow][ncol]==board[sr][sc] && board[nrow][ncol]=='O') {
+				boardDFS(board,visited,nrow,ncol,n,m);
+			}
+		}
+	}
+	
+	//1020. Number of Enclaves
+	public int numEnclaves(int[][] grid) {
+		int n=grid.length;
+		int m=grid[0].length;
+		boolean[][] visited=new boolean[n][m];
+		//Traversing boundaries make a dfs call if found 1
+		for(int j=0;j<m;j++) {
+			//First row
+			if(grid[0][j]==1 && !visited[0][j]) {
+				numEnclaveDFS(grid, visited, 0, j, n, m);
+			}
+			//Last row
+			if(grid[n-1][j]==1 && !visited[n-1][j]) {
+				numEnclaveDFS(grid, visited, n-1, j, n, m);
+			}
+		}
+		for(int j=0;j<n;j++) {
+			//First column
+			if(grid[j][0]==1 && !visited[j][0]) {
+				numEnclaveDFS(grid, visited, j, 0, n, m);
+			}
+			//Last column
+			if(grid[j][m-1]==1 && !visited[j][m-1]) {
+				numEnclaveDFS(grid, visited, j, m-1, n, m);
+			}
+		}
+		int result=0;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(grid[i][j]==1 && !visited[i][j]) {
+					result++;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public void numEnclaveDFS(int[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
+		visited[sr][sc]=true;
+		int drow[]= {0,-1,0,+1};
+		int dcol[]= {-1,0,+1,0};
+		for(int i=0;i<4;i++) {
+			int nrow = sr + drow[i];
+			int ncol = sc + dcol[i];
+			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && grid[nrow][ncol]==1) {
+				numEnclaveDFS(grid,visited,nrow,ncol,n,m);
+			}
+		}
+	}
+	
+	//200. Number of Islands
+	public int numIslands(char[][] grid) {
+		int n=grid.length;
+		int m=grid[0].length;
+		boolean[][] visited= new boolean[n][m];
+		int result=0;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(grid[i][j]=='1' && !visited[i][j]) {
+					numIslandsDFS(grid, visited, i, j, n, m);
+					result++;
+				}
+			}
+		}
+		return result;
+	}
+	
+	public void numIslandsDFS(char[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
+		visited[sr][sc]=true;
+		int drow[]= {0,-1,0,+1};
+		int dcol[]= {-1,0,+1,0};
+		for(int i=0;i<4;i++) {
+			int nrow = sr + drow[i];
+			int ncol = sc + dcol[i];
+			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && grid[nrow][ncol]=='1') {
+				numIslandsDFS(grid,visited,nrow,ncol,n,m);
+			}
+		}
+	}
 
 }
