@@ -1,8 +1,12 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import javafx.util.Pair;
 import main.Trees.TreeNode;
@@ -429,6 +433,86 @@ public class Graphs {
 				numIslandsDFS(grid,visited,nrow,ncol,n,m);
 			}
 		}
+	}
+	
+	//695. Max Area of Island
+	public int maxAreaOfIsland(int[][] grid) {
+		int n=grid.length;
+		int m=grid[0].length;
+		boolean[][] visited= new boolean[n][m];
+		int result=0;
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(grid[i][j]==1 && !visited[i][j]) {
+					result = Math.max(maxAreaOfIslandBFS(grid, visited, i, j, n, m),result);
+				}
+			}
+		}
+		return result;
+	}
+	
+	public int maxAreaOfIslandBFS(int[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
+		Queue<Node> q=new LinkedList<Node>();
+		q.add(new Node(sr,sc));
+		visited[sr][sc]=true;
+		int cnt=0;
+		while(!q.isEmpty()) {
+			Node node = q.poll();
+			cnt++;
+			int drow[]= {0,-1,0,+1};
+			int dcol[]= {-1,0,+1,0};
+			for(int i=0;i<4;i++) {
+				int nrow = node.i + drow[i];
+				int ncol = node.j + dcol[i];
+				if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && grid[nrow][ncol]==1) {
+					q.add(new Node(nrow,ncol));
+					visited[nrow][ncol]=true;
+				}
+			}
+		}
+		return cnt;
+	}
+	
+	//127. Word Ladder using BFS
+	public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+		//boolean[String] visited = new boolean[String]
+		Queue<Word> q=new LinkedList<Word>();
+		Set<String> st=new HashSet<String>();
+		for(int i=0;i<wordList.size();i++) {
+			st.add(wordList.get(i));
+		}
+		q.add(new Word(beginWord,1));
+		st.remove(beginWord);
+		while(!q.isEmpty()) {
+			Word node = q.poll();
+			String word = node.word;
+			int steps = node.cnt;
+			if(word.equals(endWord)) {
+				return steps;
+			}
+			for(int i=0;i<word.length();i++) {
+				for(char c='a';c<='z';c++) {
+					char[] chararray = word.toCharArray();
+					chararray[i]=c;
+					String newword = new String(chararray);
+					if(st.contains(newword)) {
+						q.add(new Word(newword,steps+1));
+						st.remove(newword);
+					}
+				}
+			}
+		}
+		return 0;
+	}
+	
+	public class Word {
+		String word;
+		public Word(String word, int cnt) {
+			super();
+			this.word = word;
+			this.cnt = cnt;
+		}
+		int cnt;
 	}
 
 }
