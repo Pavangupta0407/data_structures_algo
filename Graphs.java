@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import javafx.util.Pair;
 import main.Trees.TreeNode;
 
 public class Graphs {
@@ -406,34 +405,34 @@ public class Graphs {
 	}
 	
 	//200. Number of Islands
-	public int numIslands(char[][] grid) {
-		int n=grid.length;
-		int m=grid[0].length;
-		boolean[][] visited= new boolean[n][m];
-		int result=0;
-		for(int i=0;i<n;i++) {
-			for(int j=0;j<m;j++) {
-				if(grid[i][j]=='1' && !visited[i][j]) {
-					numIslandsDFS(grid, visited, i, j, n, m);
-					result++;
-				}
-			}
-		}
-		return result;
-	}
-	
-	public void numIslandsDFS(char[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
-		visited[sr][sc]=true;
-		int drow[]= {0,-1,0,+1};
-		int dcol[]= {-1,0,+1,0};
-		for(int i=0;i<4;i++) {
-			int nrow = sr + drow[i];
-			int ncol = sc + dcol[i];
-			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && grid[nrow][ncol]=='1') {
-				numIslandsDFS(grid,visited,nrow,ncol,n,m);
-			}
-		}
-	}
+//	public int numIslands(char[][] grid) {
+//		int n=grid.length;
+//		int m=grid[0].length;
+//		boolean[][] visited= new boolean[n][m];
+//		int result=0;
+//		for(int i=0;i<n;i++) {
+//			for(int j=0;j<m;j++) {
+//				if(grid[i][j]=='1' && !visited[i][j]) {
+//					numIslandsDFS(grid, visited, i, j, n, m);
+//					result++;
+//				}
+//			}
+//		}
+//		return result;
+//	}
+//	
+//	public void numIslandsDFS(char[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
+//		visited[sr][sc]=true;
+//		int drow[]= {0,-1,0,+1};
+//		int dcol[]= {-1,0,+1,0};
+//		for(int i=0;i<4;i++) {
+//			int nrow = sr + drow[i];
+//			int ncol = sc + dcol[i];
+//			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && !visited[nrow][ncol] && grid[nrow][ncol]=='1') {
+//				numIslandsDFS(grid,visited,nrow,ncol,n,m);
+//			}
+//		}
+//	}
 	
 	//695. Max Area of Island
 	public int maxAreaOfIsland(int[][] grid) {
@@ -514,5 +513,67 @@ public class Graphs {
 		}
 		int cnt;
 	}
-
+	
+	//https://www.geeksforgeeks.org/problems/find-the-number-of-islands/
+	public int numIslands(char[][] grid) {
+        // Code here
+		int ans=0;
+		int n=grid.length;
+		int m=grid[0].length;
+		boolean[][] visited = new boolean[n][m];
+		for(int i=0;i<n;i++) {
+			for(int j=0;j<m;j++) {
+				if(grid[i][j]=='1' && !visited[i][j]) {
+					numIslandsDFS(grid,visited,i,j,n,m);
+					ans++;
+				}
+			}
+		}
+		
+		return ans;
+    }
+	
+	public void numIslandsDFS(char[][] grid,boolean[][] visited,int sr,int sc,int n,int m) {
+		visited[sr][sc]=true;
+		int[] drow= {0,-1,-1,-1,0,+1,+1,+1};
+		int[] dcol= {-1,-1,0,+1,+1,+1,0,-1};
+		for(int i=0;i< 8;i++) {
+			int nrow=sr+drow[i];
+			int ncol=sc+dcol[i];
+			if(nrow>=0 && nrow<n && ncol>=0 && ncol<m && grid[nrow][ncol]=='1' && !visited[nrow][ncol]) {
+				numIslandsDFS(grid, visited, nrow, ncol, n, m);
+			}
+		}
+	}
+	
+	//785. Is Graph Bipartite?
+	public boolean isBipartite(int[][] graph) {
+		int nodes = graph.length;
+		int[] color = new int[nodes];
+		for (int i = 0; i < nodes; i++) {
+			color[i] = -1;
+		}
+		for (int i = 0; i < nodes; i++) {
+			if (color[i] == -1) {
+				if (bipartiteDFS(graph, color, 0, i) == false) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean bipartiteDFS(int[][] graph,int[] color,int col,int sr) {
+		color[sr]=col;
+		for(int it:graph[sr]) {
+			if(color[it]==-1) {
+				if(!bipartiteDFS(graph,color,1-col,it)) {
+					return false;
+				}
+			} else if(color[it]==col) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
