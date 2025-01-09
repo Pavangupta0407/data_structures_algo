@@ -1,7 +1,11 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+
 
 public class Arrays {
 
@@ -158,4 +162,123 @@ public class Arrays {
 		}
 		return ans;
 	}
+    
+    //11. Container With Most Water
+    //Brute approach try all possibel containers from starting
+	public int maxAreaBrute(int[] height) {
+		int max_area=0;
+		for(int i=0;i<height.length;i++) {
+			for(int j=i;j<height.length;j++) {
+				int H = Math.min(height[i],height[j]);
+				int W = j-i;
+				max_area = Math.max(max_area, H*W);
+			}
+		}
+		return max_area;
+	}
+	
+	//Optimal approach using two pointers move the pointers based on hieght 
+	// If HL < HR -> move left else move right
+	public int maxArea(int[] height) {
+		int max_area = 0;
+		int l=0;
+		int r=height.length-1;
+		while(l<r){
+			if(l>r) {
+				break;
+			}
+			int H = Math.min(height[l], height[r]);
+			int W = r - l;
+			max_area = Math.max(max_area, H * W);
+			if(height[l]<height[r]) {
+				l++;
+			} else {
+				r--;
+			}
+		}
+		return max_area;
+	}
+	//15. 3Sum
+	//Brute approach try all possible
+    public List<List<Integer>> threeSumBrute(int[] nums) {
+    	List<List<Integer>> res = new ArrayList<List<Integer>>();
+    	Set<List<Integer>> st = new HashSet<List<Integer>>();
+    	for(int i=0;i<nums.length;i++) {
+    		for(int j=i+1;j<nums.length;j++) {
+    			for(int k=j+1;k<nums.length;k++) {
+    				if(nums[i]+nums[j]+nums[k]==0) {
+    					List<Integer> triplets = new ArrayList<Integer>();
+    					triplets.add(nums[i]);
+    					triplets.add(nums[j]);
+    					triplets.add(nums[k]);
+    					triplets.sort(null);
+    					st.add(triplets);
+    				}
+    			}
+    		}
+    	}
+    	for(List<Integer> ls:st) {
+    		res.add(ls);
+    	}
+    	return res;
+    }
+    
+    //Better approach using hashset
+    public List<List<Integer>> threeSumBetter(int[] nums) {
+    	List<List<Integer>> res = new ArrayList<List<Integer>>();
+    	Set<List<Integer>> set = new HashSet<List<Integer>>();
+    	for(int i=0;i<nums.length;i++) {
+    		Set<Integer> st = new HashSet<Integer>();
+    		for(int j=i+1;j<nums.length;j++) {
+    			int var = -(nums[i]+nums[j]);
+    			if(st.contains(var)) {
+    				List<Integer> triplets = new ArrayList<Integer>();
+					triplets.add(nums[i]);
+					triplets.add(nums[j]);
+					triplets.add(var);
+					triplets.sort(null);
+					set.add(triplets);
+    			}
+    			st.add(nums[j]);
+    		}
+    	}
+    	for(List<Integer> ls:set) {
+    		res.add(ls);
+    	}
+    	return res;
+    }
+    
+    //Optimal approach using sort array and two pointers
+    public List<List<Integer>> threeSum(int[] nums) {
+    	List<List<Integer>> res = new ArrayList<List<Integer>>();
+    	java.util.Arrays.sort(nums);
+    	for(int i=0;i<nums.length;i++){
+    		if(i>0 && nums[i]==nums[i-1]) continue;
+    		int j=i+1,k=nums.length-1;
+    		while(j<k) {
+    			int val=nums[i]+nums[j]+nums[k];
+    			if(val<0) {
+    				j++;
+    			} else if (val>0) {
+    				k--;
+    			} else {
+    				List<Integer> triplets = new ArrayList<Integer>();
+					triplets.add(nums[i]);
+					triplets.add(nums[j]);
+					triplets.add(nums[k]);
+					res.add(triplets);
+					j++;
+					k--;
+					while(j<k && nums[j]==nums[j-1]) {
+						j++;
+					}
+					while(k>j && nums[k]==nums[k+1]) {
+						k--;
+					}
+    			}
+    		}
+    	}
+    	return res;
+    }
+    
 }
