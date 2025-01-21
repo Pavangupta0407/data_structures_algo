@@ -281,4 +281,252 @@ public class Arrays {
     	return res;
     }
     
+    
+    //Binary Search
+    public int search(int[] nums, int target) {
+        //int ans = iterativeBS(nums,target);
+    	int ans = recursiveBS(nums,target,0,nums.length-1);
+        return ans;
+    }
+    
+    //Iterative approach
+    public int iterativeBS(int[] nums,int target) {
+    	int low=0,high=nums.length-1;
+    	while(low<high) {
+    		int mid=(low+high)/2;
+    		if(nums[mid]==target) {
+    			return mid;
+    		} else if(target > nums[mid]) {
+    			low=mid+1;
+    		} else {
+    			high=mid-1;
+    		}
+    	}
+    	return -1;
+    }
+    
+    //Recursive approach
+    public int recursiveBS(int[] nums,int target,int low,int high) {
+    	if(low>high) {
+    		return -1;
+    	}
+    	int mid=(low+high)/2;
+    	if(nums[mid]==target) {
+    		return mid;
+    	} else if(target > nums[mid]) {
+    		return recursiveBS(nums, target, mid +1, high);
+    	}
+    	return recursiveBS(nums, target, low, mid-1);
+    }
+    
+    //Floor in a Sorted Array
+    // Same logic can be used for 35. Search Insert Position
+    static int findFloor(int[] arr, int k) {
+        // write code here
+    	int ans = arr.length;
+    	if(k< arr[0]) {
+    		return -1;
+    	}
+    	int low=0,high=arr.length-1;
+    	while(low<=high) {
+    		int mid = (low+high)/2;
+    		if(arr[mid]<=k) {
+    			ans=mid;
+    			low=mid+1;
+    		} else {
+    			high=mid-1;
+    		}
+    	}
+    	return ans;
+    }
+    
+    public int[] getFloorAndCeil(int x, int[] arr) {
+        // code here
+    	int[] ans = new int[2];
+    	java.util.Arrays.sort(arr);
+    	int floor = getFloor(x,arr);
+    	int ceil = getCeil(x,arr);
+    	ans[0]=floor;
+    	ans[1]=ceil;
+    	return ans;
+    }
+    
+    public int getFloor(int x,int[] arr) {
+    	if(x< arr[0]) {
+    		return -1;
+    	}
+    	int floor=arr.length;
+    	int low=0,high=arr.length-1;
+    	while(low<=high) {
+    		int mid = (low+high)/2;
+    		if(arr[mid]<=x) {
+    			floor=arr[mid];
+    			low=mid+1;
+    		} else {
+    			high=mid-1;
+    		}
+    	}
+    	return floor;
+    }
+    
+    public int getCeil(int x,int[] arr) {
+    	if(x> arr[arr.length-1]) {
+    		return -1;
+    	}
+    	int ceil=0;
+    	int low=0,high=arr.length-1;
+    	while(low<=high) {
+    		int mid = (low+high)/2;
+    		if(arr[mid]>=x) {
+    			ceil=arr[mid];
+    			high=mid-1;
+    		} else {
+    			low=mid+1;
+    		}
+    	}
+    	return ceil;
+    }
+    
+    //35. Search Insert Position
+    public int searchInsert(int[] nums, int target) {
+        int ans = nums.length;
+    	if(target < nums[0]) {
+    		return -1;
+    	}
+    	int low=0,high=nums.length-1;
+    	while(low<=high) {
+    		int mid = (low+high)/2;
+    		if(nums[mid]>=target) {
+    			ans=mid;
+                high=mid-1;
+    		} else {
+    			low=mid+1;
+    		}
+    	}
+    	return ans;
+    }    
+    
+    //34. Find First and Last Position of Element in Sorted Array
+    //Brute Approach
+    public int[] searchRangeBrute(int[] nums, int target) {
+        int[] res = new int[2];
+        int start=-1,end=-1;
+        int i=0,j=nums.length-1;
+        while(i < j){
+            if(nums[i] !=target){
+                i++;
+            }
+            if(nums[j]!=target){
+                
+                j--;
+            }
+            if(nums[i]==target){
+                start=i;
+            }
+            if(nums[j]==target){
+                end=j;
+            }
+        }
+        res[0]=start;
+        res[1]=end;
+        return res;
+    }
+    
+    //Find lower and upper bound optimal approach
+    public int[] searchRange(int[] nums, int target) {
+        int[] res = new int[2];
+        int lb = getLowerBound(nums, target);
+        int ub = getUpperbound(nums, target);
+        if(lb<0 || lb>nums.length || nums[lb]!=target) {
+        	lb=-1;
+        }
+        if(ub<0 || ub>nums.length || nums[ub]!=target) {
+        	ub=-1;
+        }
+        res[0]=lb;
+        res[1]=ub;
+        return res;
+    }
+    
+    public int getLowerBound(int[] nums,int target) {
+    	if(target<nums[0]) {
+    		return -1;
+    	}
+    	int ans=nums.length-1;
+    	int low=0,high=nums.length-1;
+    	while(low<=high) {
+    		int mid = (low+high)/2;
+    		if(nums[mid]<=target) {
+    			ans=mid;
+    			high=mid-1;
+    		} else {
+    			low=mid+1;
+    		}
+    	}
+    	return ans;
+    }
+    
+    public int getUpperbound(int[] nums,int target) {
+    	int ans=nums.length-1;
+    	if(target>nums[nums.length-1]) {
+    		return -1;
+    	}
+    	int low=0,high=nums.length-1;
+    	while(low<=high) {
+    		int mid=(low+high)/2;
+    		if(nums[mid]>target) {
+    			ans=mid;
+    			high=mid-1;
+    		} else {
+    			low=mid+1;
+    		}
+    	}
+    	return ans;
+    }
+    
+    //189. Rotate Array Brute approach
+    public void rotateBrute(int[] nums, int k) {
+    	k=k%nums.length;
+		for(int i=0;i<k;i++) {
+			int temp=nums[nums.length-1];
+			for(int j=nums.length-1;j>0;j--) {
+				nums[j]=nums[j-1];
+			}
+			nums[0]=temp;
+		}
+	}
+    
+    //189. Rotate Array Optimal approach
+    //Rotate first d element , then next remain element and at last
+    //rotate complete array
+    public void rotate(int[] nums, int k) {
+    	k=k%nums.length;
+    	reverse(nums, 0, k-1);
+    	reverse(nums, k, nums.length-1);
+    	reverse(nums, 0, nums.length-1);
+	}
+    
+    public void reverse(int[] nums, int i,int j) {
+    	while(i!=j) {
+    		int temp=nums[i];
+    		nums[i]=nums[j];
+    		nums[j]=temp;
+    		i++;
+    		j--;
+    	}
+    }
+    
+    //Right rotate above one is left rotate
+    
+//    void rotate(vector<int> arr, int d)
+//    {
+//    	if(d>size)
+//    	d = d % size;
+//
+//        reverse(arr.begin(),arr.end());
+//        reverse(arr.begin()+d,arr.end());
+//        reverse(arr.begin(),arr.begin()+d);
+//    }
+
+
 }
