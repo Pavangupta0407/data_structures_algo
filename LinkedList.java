@@ -206,6 +206,30 @@ public class LinkedList {
 		return temp;
 	}
 	
+	//206. Reverse Linked List
+	public ListNode reverseListIterative(ListNode head) {
+		ListNode temp=head,prev=null;
+		while(temp!=null) {
+			ListNode front=temp.next;
+			temp.next=prev;
+			prev=temp;
+			temp=front;
+		}
+		return head;
+	}
+	
+	//Recursion
+	public ListNode reverseList(ListNode head) {
+		if(head==null || head.next==null) {
+			return head;
+		}
+		ListNode newhead = reverseList(head.next);
+		ListNode front = head.next;
+		front.next=head;
+		head.next=null;
+		return newhead;
+	}
+		
 	//876. Middle of the Linked List Optimal using slow and fast pointer
 		public ListNode middleNode(ListNode head) {
 			ListNode slow=head,fast=head;
