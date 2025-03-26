@@ -115,11 +115,34 @@ public class Recurssion {
 		}
 	}
 	
+	public List<List<Integer>> subsets(int[] nums) {
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		ArrayList<Integer> temp = new ArrayList<Integer>();
+		printsubseq(0,res,temp,nums,nums.length);
+		return res;
+    }
+	
+	public void printsubseq(int ind,List<List<Integer>> res,ArrayList<Integer> temp,int[] nums,int n) {
+		if(ind==n) {
+			res.add(new ArrayList<>(temp));
+			return;
+		}
+		printsubseq(ind+1, res, temp, nums, n);
+		temp.add(nums[ind]);
+		printsubseq(ind+1, res, temp, nums, n);
+		temp.remove(temp.size()-1);
+	}
+	
 	public static void main(String args[]) {
 		Recurssion r = new Recurssion();
 		System.out.println(r.myPow(2.0, 10));
 		System.out.println(r.countGoodNumbers(50));
 		System.out.println(r.generateParenthesis(2));
+		int[] arr = {1,2,3};
+		List<List<Integer>> subsets = r.subsets(arr);
+		for(List<Integer> t:subsets) {
+			System.out.println(t.toString());
+		}
 	}
 
 }
