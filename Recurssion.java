@@ -1,6 +1,8 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -133,14 +135,84 @@ public class Recurssion {
 		temp.remove(temp.size()-1);
 	}
 	
+	public List<List<Integer>> combinationSum(int[] candidates, int target) {
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		List<Integer> temp = new ArrayList<Integer>();
+		comsum(0,target,candidates,res,temp);
+		return res;
+    }
+	
+	private void comsum(int ind, int tar, int[] arr, List<List<Integer>> res, List<Integer> temp) {
+		if(ind==arr.length) {
+			if(tar==0) {
+				res.add(new ArrayList<>(temp));
+			}
+			return;
+		}
+		if(arr[ind]<=tar) {
+			temp.add(arr[ind]);
+			comsum(ind, tar-arr[ind], arr, res, temp);
+			temp.remove(temp.size()-1);
+		}
+		comsum(ind+1, tar, arr, res, temp);
+	}
+	
+	public ArrayList<Integer> subsetSums(int[] arr) {
+        // code here
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		subsets(0,arr,res,0);
+		res.sort(null);
+		return res;
+    }
+
+	private void subsets(int ind, int[] arr, ArrayList<Integer> res, int sum) {
+		if(ind==arr.length) {
+			res.add(sum);
+			return;
+		}
+		subsets(ind+1,arr,res,sum);
+		subsets(ind+1,arr,res,sum+arr[ind]);
+		
+	}
+	
+	public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+		List<List<Integer>> res = new ArrayList<List<Integer>>();
+		List<Integer> temp = new ArrayList<Integer>();
+		Arrays.sort(candidates);
+		comsum2(0,target,candidates,res,temp);
+		return res;
+    }
+	
+	private void comsum2(int ind, int tar, int[] arr, List<List<Integer>> res, List<Integer> temp) {
+		if(tar==0) {
+			res.add(new ArrayList<>(temp));
+			return;
+		}
+		for(int i=ind;i<arr.length;i++) {
+			if(i>ind && arr[i]==arr[i-1]) continue;
+			if(arr[i]>tar) break;
+			temp.add(arr[i]);
+			comsum2(i+1, tar-arr[i], arr, res, temp);
+			temp.remove(temp.size()-1);
+		}	
+	}
+
 	public static void main(String args[]) {
 		Recurssion r = new Recurssion();
 		System.out.println(r.myPow(2.0, 10));
 		System.out.println(r.countGoodNumbers(50));
 		System.out.println(r.generateParenthesis(2));
-		int[] arr = {1,2,3};
-		List<List<Integer>> subsets = r.subsets(arr);
+		int[] arr = {1,2,1};
+		List<List<Integer>> subsets = r.combinationSum(arr,7);
 		for(List<Integer> t:subsets) {
+			//System.out.println(t.toString());
+		}
+		ArrayList<Integer> res = r.subsetSums(arr);
+		System.out.println(res.toString());
+		int[] arr2 = {10,1,2,7,6,1,5};
+		List<List<Integer>> subsets2 = r.combinationSum2(arr2,8);
+		System.out.println("Com sum2");
+		for(List<Integer> t:subsets2) {
 			System.out.println(t.toString());
 		}
 	}
